@@ -20,33 +20,19 @@ export interface CardData {
 
 interface CardProps {
   data: CardData;
-  state?: CardState;
-  onClickCard: () => void;
+  onClickCard: (target: Element) => void;
 }
 
-const Card: React.VFC<CardProps> = ({ data, state, onClickCard }) => {
-
+const Card: React.VFC<CardProps> = ({ data, onClickCard }) => {
   const handleClick = (e: React.MouseEvent): void => {
     e.preventDefault();
-    // e.currentTarget.classList.add('open');
-    onClickCard();
-  };
-
-  const getClassNameByState = (): string => {
-    switch(state) {
-      case CardState.OPENED:
-        return 'open';
-
-      case CardState.HIDE:
-        return 'hide';
-
-      default: 
-        return '';
-    }
+    const target = e.currentTarget;
+    target.setAttribute('key', data.key);
+    onClickCard(target);
   };
 
   return (
-    <div className={`card  ${getClassNameByState()}`} onClick={handleClick}>
+    <div className={`card `} onClick={handleClick}>
       <div className="card__side card__side--front">
         {data.type === CardType.WORD ? (
           <p>{data.content}</p>
@@ -62,10 +48,6 @@ const Card: React.VFC<CardProps> = ({ data, state, onClickCard }) => {
       <div className="card__side card__side--back"></div>
     </div>
   );
-};
-
-Card.defaultProps = {
-  state: CardState.CLOSED,
 };
 
 export default Card;

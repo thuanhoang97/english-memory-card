@@ -1,23 +1,29 @@
-
 .card-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  margin: 100px auto;
 
-  .row {
-    display: flex;
+  .card-board {
+    .info {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+      font-size: 1.2rem;
+    }
+
+    .row {
+      display: flex;
+    }
   }
 }
-
 
 .card {
   position: relative;
   width: 120px;
   height: 120px;
   margin: 5px;
-  transition: transform .4s ease-out;
+  transition: transform 0.4s ease-out;
 
   &__side {
     position: absolute;
@@ -29,7 +35,7 @@
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
-    transition: transform .6s ease-out;
+    transition: transform 0.6s ease-out;
     user-select: none;
     cursor: pointer;
 
@@ -68,7 +74,40 @@
   }
 
   &.hide {
-    animation: card-hide .8s ease-out both;
+    animation: card-hide 0.8s ease both;
+  }
+
+  &.wrong {
+    border: 1px solid red;
+    transform: scale(1.1);
+  }
+
+  &.right {
+    border: 1px solid green;
+    transform: scale(1.1);
+  }
+}
+
+.loading {
+  position: relative;
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 50px;
+  border: 1px solid #999;
+  text-align: center;
+
+  &__percent {
+    font-weight: 600;
+  }
+
+  &__bg {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #00aeff;
   }
 }
 
@@ -78,7 +117,7 @@
   }
 
   40% {
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 
   100% {
