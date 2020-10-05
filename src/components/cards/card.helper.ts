@@ -1,5 +1,3 @@
-const CARD_ACTION_TIME = 600;
-
 export enum CardType {
   IMAGE = 'IMAGE',
   WORD = 'WORD',
@@ -28,17 +26,23 @@ export const genCardsData = (words: string[]): CardData[] => {
   return shuffleArr(data);
 };
 
-export const actionByState = (cardEl: Element): void => {
-  const checkState = cardEl.getAttribute('check');
-  switch (checkState) {
+
+export const actionByState = (targets: HTMLElement[], state: string, delay: number): void => {
+  setTimeout(() => {
+    targets.forEach((target) => _actionByState({ target, state }));
+  }, delay);
+};
+
+const _actionByState = ({ target, state }: { target: HTMLElement; state: string }): void => {
+  target.style.animationDelay = '0s';
+
+  switch (state) {
     case 'wrong':
-      setTimeout(() => cardEl.classList.remove('open'), CARD_ACTION_TIME);
+      target.classList.remove('open');
       break;
 
     case 'right':
-      setTimeout(() => {
-        cardEl.classList.add('hide');
-      }, CARD_ACTION_TIME / 2);
+      target.classList.add('hide');
       break;
 
     default:
@@ -49,5 +53,4 @@ export const actionByState = (cardEl: Element): void => {
 export const isSameCard = (cardEl1: Element, cardEl2: Element): boolean =>
   cardEl1.getAttribute('key') === cardEl2.getAttribute('key');
 
-const shuffleArr = (arr: any) =>
-  [...arr].sort(() => Math.floor(Math.random() - 0.5));
+const shuffleArr = (arr: any) => [...arr].sort(() => Math.floor(Math.random() - 0.5));

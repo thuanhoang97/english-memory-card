@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './cards.scss';
-import Card from './Card';
+import CardList from './CardList';
 import { actionByState, isSameCard, CardData } from './card.helper';
 
 type Props = {
@@ -12,11 +12,11 @@ const CardBoard: React.FC<Props> = ({ cardsData, onPlayAgain }) => {
   const [gameFinished, setGameFinished] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [numMove, setNumMove] = useState<number>(0);
-  const [openCardsEl, setOpenCardsEl] = useState<Element[]>([]);
+  const [openCardsEl, setOpenCardsEl] = useState<HTMLElement[]>([]);
 
   useEffect(() => {
     if (score === cardsData.length / 2) {
-      setTimeout(() => setGameFinished(true), 1000);
+      setTimeout(() => setGameFinished(true), 1500);
     }
   }, [score, cardsData]);
 
@@ -25,22 +25,17 @@ const CardBoard: React.FC<Props> = ({ cardsData, onPlayAgain }) => {
 
     setOpenCardsEl(openCardsEl.slice(2));
     const checkingCardsEl = openCardsEl.slice(0, 2);
-    let checkState: string;
     if (isSameCard(checkingCardsEl[0], checkingCardsEl[1])) {
-      checkState = 'right';
+      actionByState(checkingCardsEl, 'right', 400);
       setScore((score) => score + 1);
     } else {
-      checkState = 'wrong';
+      actionByState(checkingCardsEl, 'wrong', 600);
     }
 
-    checkingCardsEl.forEach((cardEl) => {
-      cardEl.setAttribute('check', checkState);
-      actionByState(cardEl);
-    });
     setNumMove((num) => num + 1);
   }, [openCardsEl]);
 
-  const handleClickCard = (cardEl: Element) => {
+  const handleClickCard = (cardEl: HTMLElement) => {
     if (cardEl.classList.contains('open')) return;
     cardEl.classList.add('open');
 
@@ -54,26 +49,6 @@ const CardBoard: React.FC<Props> = ({ cardsData, onPlayAgain }) => {
     onPlayAgain();
   };
 
-  const getCards = (): React.ReactNode[][] => {
-    const row = Math.log2(cardsData.length);
-    const col = row;
-    const cards: React.ReactNode[][] = [];
-    for (let i = 0; i < row; i++) {
-      cards[i] = [];
-      for (let j = 0; j < col; j++) {
-        const index: number = i * row + j;
-        cards[i].push(
-          <Card
-            key={index}
-            data={cardsData[index]}
-            onClickCard={handleClickCard}
-          />
-        );
-      }
-    }
-    return cards;
-  };
-
   return (
     <div className="card-board">
       <div className="info">
@@ -84,13 +59,12 @@ const CardBoard: React.FC<Props> = ({ cardsData, onPlayAgain }) => {
           Play again
         </button>
       ) : (
-        <div className="cards">
-          {getCards().map((cardsInRow, rowIdx) => (
-            <div className="row" key={rowIdx}>
-              {cardsInRow}
-            </div>
-          ))}
-        </div>
+        <CardList
+          cardsData={cardsData}
+          row={4}
+          col={4}
+          onClickCard={handleClickCard}
+        />
       )}
     </div>
   );

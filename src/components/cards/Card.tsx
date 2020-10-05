@@ -20,19 +20,20 @@ export interface CardData {
 
 interface CardProps {
   data: CardData;
-  onClickCard: (target: Element) => void;
+  index: number;
+  onClickCard: (target: HTMLElement) => void;
 }
 
-const Card: React.VFC<CardProps> = ({ data, onClickCard }) => {
+const Card: React.VFC<CardProps> = ({ index, data, onClickCard }) => {
   const handleClick = (e: React.MouseEvent): void => {
     e.preventDefault();
     const target = e.currentTarget;
     target.setAttribute('key', data.key);
-    onClickCard(target);
+    onClickCard(target as HTMLElement);
   };
 
   return (
-    <div className={`card `} onClick={handleClick}>
+    <div className={`card`} onClick={handleClick} style={{ animationDelay: `${index * 0.05}s`}}>
       <div className="card__side card__side--front">
         {data.type === CardType.WORD ? (
           <p>{data.content}</p>

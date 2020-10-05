@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import './cards.scss';
 import CardBoard from './CardBoard';
-import Loading from './Loading';
+import ImagesLoading from './ImagesLoading';
 import { genCardsData, CardType, CardData } from './card.helper';
 
 type CardContainerProps = {
@@ -9,59 +9,34 @@ type CardContainerProps = {
 };
 
 const CardContainer: React.FC<CardContainerProps> = ({ words }) => {
-  const [started, setStarted] = useState<boolean>(false);
   const [cardsData, setCardsData] = useState<CardData[]>([]);
-  const [numImagesLoaded, setNumImagesLoaded] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const imagesURL = useMemo(() => {
+    return cardsData
+      .filter((d) => d.type === CardType.IMAGE)
+      .map((d) => d.content);
+  }, [cardsData]);
+
+  const loadData = useCallback(() => setCardsData(genCardsData(words)), [
+    words,
+  ]);
+  const handleFinishedLoading = useCallback(() => setLoading(false), []);
 
   useEffect(() => {
-    if (numImagesLoaded === words.length) {
-      setTimeout(() => setLoading(false), 500);
-    }
-  }, [numImagesLoaded, words]);
-
-  const handleStartGame = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setStarted(true);
     setLoading(true);
-    loadData();
-  };
+    setCardsData(genCardsData(words));
+  }, [words]);
 
-  const loadData = () => setCardsData(genCardsData(words));
-
-  const handleImageLoaded = () => setNumImagesLoaded((num) => num + 1);
-
-  const getImagesURL = () =>
-    cardsData.filter((d) => d.type === CardType.IMAGE).map((d) => d.content);
-
-  const loadingPercent = Math.floor((numImagesLoaded / words.length) * 100);
-
-  if (loading) {
-    return (
-      <>
-        <Loading percent={loadingPercent} />
-        <div className="fake-images">
-          {getImagesURL().map((url, idx) => (
-            <img
-              key={idx}
-              src={url}
-              onLoad={handleImageLoaded}
-              alt=""
-              style={{ display: 'none' }}
-            />
-          ))}
-        </div>
-      </>
-    );
-  }
   return (
     <div className="card-container">
-      {started ? (
-        <CardBoard cardsData={cardsData} onPlayAgain={loadData} />
+      {loading ? (
+        <ImagesLoading
+          imagesURL={imagesURL}
+          onFinished={handleFinishedLoading}
+        />
       ) : (
-        <button className="btn" onClick={handleStartGame}>
-          Start
-        </button>
+        <CardBoard cardsData={cardsData} onPlayAgain={loadData} />
       )}
     </div>
   );

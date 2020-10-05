@@ -31,8 +31,11 @@ button {
 }
 
 .App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 600px;
-  margin: 80px auto;
+  margin: 50px auto;
 
   .title {
     font-size: 2.4rem;
@@ -54,4 +57,17 @@ button {
   &:hover {
     background-color: #029ce3;
   }
+
+  &:disabled {
+    background-color: #01577e;
+    color: #ccc;
+    cursor: inherit;
+  }
+}
+
+.input {
+  min-height: 25px;
+  padding: 5px;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
 }
