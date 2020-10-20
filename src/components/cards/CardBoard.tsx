@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './cards.scss';
 import CardList from './CardList';
-import { actionByState, isSameCard, CardData } from './card.helper';
+import { actionByState, isSameCard, CardData, saveNumMove } from './card.helper';
 
 type Props = {
   cardsData: CardData[];
@@ -16,6 +16,7 @@ const CardBoard: React.FC<Props> = ({ cardsData, onPlayAgain }) => {
 
   useEffect(() => {
     if (score === cardsData.length / 2) {
+      saveNumMove(numMove);
       setTimeout(() => setGameFinished(true), 1500);
     }
   }, [score, cardsData]);

@@ -9,6 +9,8 @@ export type CardData = {
   key: string;
 };
 
+export const TOP_SCORE_RECORD = 10;
+
 export const getImageURL = (keyword: string): string => {
   return `https://source.unsplash.com/150x150/?${keyword}`;
 };
@@ -23,17 +25,27 @@ export const genCardsData = (words: string[]): CardData[] => {
       key: word,
     });
   });
-  return shuffleArr(data);
+  return data;
+  // return shuffleArr(data);
 };
 
-
-export const actionByState = (targets: HTMLElement[], state: string, delay: number): void => {
+export const actionByState = (
+  targets: HTMLElement[],
+  state: string,
+  delay: number
+): void => {
   setTimeout(() => {
     targets.forEach((target) => _actionByState({ target, state }));
   }, delay);
 };
 
-const _actionByState = ({ target, state }: { target: HTMLElement; state: string }): void => {
+const _actionByState = ({
+  target,
+  state,
+}: {
+  target: HTMLElement;
+  state: string;
+}): void => {
   target.style.animationDelay = '0s';
 
   switch (state) {
@@ -53,4 +65,16 @@ const _actionByState = ({ target, state }: { target: HTMLElement; state: string 
 export const isSameCard = (cardEl1: Element, cardEl2: Element): boolean =>
   cardEl1.getAttribute('key') === cardEl2.getAttribute('key');
 
-const shuffleArr = (arr: any) => [...arr].sort(() => Math.floor(Math.random() - 0.5));
+export const saveNumMove = (numMove: number): void => {
+  const topMoves: number[] = JSON.parse(localStorage.getItem('topMoves') || '[]');
+  let newTopMoves: number[] = [...topMoves];
+  if (newTopMoves.length <  TOP_SCORE_RECORD) {
+    newTopMoves.push(numMove);
+  } else if (numMove < newTopMoves[newTopMoves.length - 1]){
+    newTopMoves[newTopMoves.length - 1] = numMove;
+  }
+  localStorage.setItem('topMoves', JSON.stringify(newTopMoves.sort()));
+};
+
+const shuffleArr = (arr: any) =>
+  [...arr].sort(() => Math.floor(Math.random() - 0.5));
