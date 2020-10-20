@@ -25,8 +25,7 @@ export const genCardsData = (words: string[]): CardData[] => {
       key: word,
     });
   });
-  return data;
-  // return shuffleArr(data);
+  return shuffleArr(data);
 };
 
 export const actionByState = (
